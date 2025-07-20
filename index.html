@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morning Seeds - Daily Emerson Wisdom</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: gradientShift 10s ease-in-out infinite alternate;
+        }
+
+        @keyframes gradientShift {
+            0% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+            100% { background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); }
+        }
+
+        .container {
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            margin-bottom: 30px;
+            font-family: 'Arial', sans-serif;
+        }
+
+        #qrcode {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+
+        #qrcode canvas {
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .qr-instruction {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            margin-top: 20px;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Quote Section Styles */
+        .quote-section {
+            display: none;
+        }
+
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 300px;
+            perspective: 1000px;
+            perspective-origin: center center;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: transform 0.1s ease-out;
+            transform-style: preserve-3d;
+        }
+
+        .flip-card:hover {
+            transform: scale(1.02);
+        }
+
+        .flip-card.tilt-active {
+            transition: none;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+            transform-origin: center center;
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            transform-origin: center center;
+            top: 0;
+            left: 0;
+        }
+
+        .flip-card-front {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            transform: rotateY(0deg);
+        }
+
+        .flip-card-front::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 4rem;
+            color: rgba(255, 255, 255, 0.1);
+            font-family: serif;
+        }
+
+        .flip-card-front::after {
+            content: '"';
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-size: 4rem;
+            color: rgba(255, 255, 255, 0.1);
+            font-family: serif;
+        }
+
+        .flip-card-back {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            transform: rotateY(180deg);
+            color: #2c3e50;
+        }
+
+        .text-main {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            right: 30px;
+            bottom: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.6;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .text-sub {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            right: 30px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .quote-text {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.95);
+            font-style: italic;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .quote-author {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-family: 'Arial', sans-serif;
+            font-style: normal;
+        }
+
+        .explanation-text {
+            font-size: 1.1rem;
+            font-family: 'Arial', sans-serif;
+            font-style: normal;
+            color: #2c3e50;
+        }
+
+        .explanation-spacer {
+            visibility: hidden;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .new-quote-btn, .copy-btn, .share-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            font-family: 'Arial', sans-serif;
+            min-width: 120px;
+        }
+
+        .new-quote-btn:hover, .copy-btn:hover, .share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #764ba2, #667eea);
+        }
+
+        .copy-btn {
+            background: linear-gradient(45deg, #11998e, #38ef7d);
+        }
+
+        .copy-btn:hover {
+            background: linear-gradient(45deg, #38ef7d, #11998e);
+        }
+
+        .share-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ffa726);
+        }
+
+        .share-btn:hover {
+            background: linear-gradient(45deg, #ffa726, #ff6b6b);
+        }
+
+        .loading {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-family: 'Arial', sans-serif;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .card {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .quote-text {
+                font-size: 1.1rem;
+            }
+
+            .flip-card {
+                height: 280px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .new-quote-btn, .copy-btn, .share-btn {
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+
+        /* Accessibility */
+        .flip-card:focus {
+            outline: none;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- QR Code Section (default view) -->
+        <div id="qr-section" class="qr-section">
+            <div class="card">
+                <h1>Morning Seeds</h1>
+                <p class="subtitle">Daily wisdom from Ralph Waldo Emerson</p>
+                <div id="qrcode"></div>
+                <p class="qr-instruction">Scan for your daily Emerson wisdom</p>
+            </div>
+        </div>
+        
+        <!-- Quote Section (shown when accessed via QR code) -->
+        <div id="quote-section" class="quote-section">
+            <div class="card">
+                <h1>Morning Seeds</h1>
+                <div class="flip-card" id="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="text-main quote-text" id="quote-text"></div>
+                            <div class="text-sub quote-author">— Ralph Waldo Emerson</div>
+                        </div>
+                        <div class="flip-card-back">
+                            <div class="text-main explanation-text" id="explanation-text"></div>
+                            <div class="text-sub explanation-spacer"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="new-quote-btn" id="new-quote-btn">New Quote</button>
+                    <button class="copy-btn" id="copy-btn">Copy Quote</button>
+                    <button class="share-btn" id="share-btn">Share Link</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Emerson quotes data
+        const emersonQuotes = [
+            {
+                quote: "Sow a thought and you reap an action; sow an act and you reap a habit; sow a habit and you reap a character; sow a character and you reap a destiny.",
+                explanation: "This powerful quote reminds us that our thoughts are the seeds of our future. Every small thought leads to actions, which become patterns that shape who we are and ultimately determine our life's direction."
+            },
+            {
+                quote: "To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment.",
+                explanation: "Emerson emphasizes the courage required to maintain authenticity. In a world full of external pressures and expectations, staying true to your inner self is both challenging and deeply rewarding."
+            },
+            {
+                quote: "What lies behind us and what lies before us are tiny matters compared to what lies within us.",
+                explanation: "This quote highlights the immense power of our inner strength and character. Our past experiences and future uncertainties pale in comparison to the potential and wisdom we carry within ourselves."
+            },
+            {
+                quote: "Trust thyself: every heart vibrates to that iron string.",
+                explanation: "Emerson advocates for self-reliance and trusting your inner voice. He suggests that deep within each person is an unwavering core of truth that, when trusted, guides us toward authentic living."
+            },
+            {
+                quote: "Nothing great was ever achieved without enthusiasm.",
+                explanation: "Passion and genuine excitement are essential ingredients for any meaningful accomplishment. Emerson reminds us that lukewarm efforts rarely produce extraordinary results."
+            },
+            {
+                quote: "The only way to have a friend is to be one.",
+                explanation: "True friendship is reciprocal and begins with our own actions. By embodying the qualities we seek in others—loyalty, kindness, understanding—we naturally attract similar people into our lives."
+            },
+            {
+                quote: "All life is an experiment. The more experiments you make the better.",
+                explanation: "Emerson encourages us to embrace life as a series of learning opportunities. Each new experience, whether successful or not, teaches us something valuable about ourselves and the world."
+            },
+            {
+                quote: "Nothing can bring you peace but yourself. Nothing can bring you peace but the triumph of principles.",
+                explanation: "True peace comes from within, not from external circumstances. When we live according to our deepest values and principles, we find a lasting tranquility that no outside force can disturb."
+            },
+            {
+                quote: "To be great is to be misunderstood.",
+                explanation: "Innovative thinking and authentic living often put us at odds with conventional wisdom. Emerson suggests that being misunderstood is sometimes the price of pursuing truth and originality."
+            },
+            {
+                quote: "We are always getting ready to live, but never living.",
+                explanation: "This quote warns against the trap of perpetual preparation. Life happens in the present moment, and we must resist the tendency to postpone living while we wait for perfect conditions."
+            },
+            {
+                quote: "Insist on yourself; never imitate.",
+                explanation: "Emerson champions individuality over conformity. Rather than copying others, we should develop and express our unique gifts and perspectives, contributing something original to the world."
+            },
+            {
+                quote: "Though we travel the world over to find the beautiful, we must carry it with us, or we find it not.",
+                explanation: "Beauty is not just in external places or things—it's a quality of perception we cultivate within ourselves. When we develop an appreciation for beauty, we can find it anywhere."
+            },
+            {
+                quote: "Fear always springs from ignorance.",
+                explanation: "Many of our fears dissolve when we gain knowledge and understanding. Emerson suggests that education and awareness are powerful antidotes to the anxiety that comes from the unknown."
+            },
+            {
+                quote: "Hitch your wagon to a star.",
+                explanation: "This famous metaphor encourages us to aim high and connect our efforts to something greater than ourselves. By pursuing noble ideals and ambitious goals, we elevate our entire journey."
+            },
+            {
+                quote: "Life wastes itself while we are preparing to live.",
+                explanation: "Similar to his other quote about getting ready to live, this reminds us that over-planning and hesitation can cause us to miss the very life we're trying to prepare for. Action and presence are essential."
+            }
+        ];
+
+        // Global variables
+        let currentQuoteIndex = -1;
+        let isFlipped = false;
+        let currentQuote = '';
+
+        // Get current URL and check for random parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const showRandom = urlParams.get('random') === 'true';
+        
+        // Get current page URL for QR code
+        const currentUrl = window.location.origin + window.location.pathname;
+        const qrUrl = currentUrl + '?random=true';
+        
+        // Initialize the page
+        function initializePage() {
+            if (showRandom) {
+                showQuoteSection();
+            } else {
+                showQRSection();
+            }
+            
+            // Add keyboard event listeners
+            document.addEventListener('keydown', handleKeyboardNavigation);
+            
+            // Add touch support for mobile
+            addTouchSupport();
+            
+            // Initialize tilt effect
+            initTiltEffect();
+        }
+        
+        // Handle keyboard navigation
+        function handleKeyboardNavigation(event) {
+            if (showRandom) {
+                switch(event.key) {
+                    case ' ':
+                    case 'Enter':
+                        event.preventDefault();
+                        if (event.target === document.getElementById('new-quote-btn')) {
+                            displayRandomQuote();
+                        } else if (event.target === document.getElementById('copy-btn')) {
+                            copyQuote();
+                        } else if (event.target === document.getElementById('share-btn')) {
+                            shareLink();
+                        } else {
+                            toggleFlipCard();
+                        }
+                        break;
+                    case 'n':
+                    case 'N':
+                        event.preventDefault();
+                        displayRandomQuote();
+                        break;
+                    case 'f':
+                    case 'F':
+                        event.preventDefault();
+                        toggleFlipCard();
+                        break;
+                    case 'c':
+                    case 'C':
+                        event.preventDefault();
+                        copyQuote();
+                        break;
+                    case 's':
+                    case 'S':
+                        event.preventDefault();
+                        shareLink();
+                        break;
+                }
+            }
+        }
+        
+        // Add touch support for mobile devices
+        function addTouchSupport() {
+            const flipCard = document.getElementById('flip-card');
+            if (flipCard) {
+                flipCard.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    toggleFlipCard();
+                });
+            }
+        }
+        
+        // Tilted card effect
+        function initTiltEffect() {
+            const flipCard = document.getElementById('flip-card');
+            if (!flipCard) return;
+            
+            let isMouseOver = false;
+            
+            flipCard.addEventListener('mouseenter', () => {
+                isMouseOver = true;
+                flipCard.classList.add('tilt-active');
+            });
+            
+            flipCard.addEventListener('mouseleave', () => {
+                isMouseOver = false;
+                flipCard.classList.remove('tilt-active');
+                // Reset to neutral position
+                flipCard.style.transform = '';
+            });
+            
+            flipCard.addEventListener('mousemove', (e) => {
+                if (!isMouseOver) return;
+                
+                const rect = flipCard.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                const mouseX = e.clientX - centerX;
+                const mouseY = e.clientY - centerY;
+                
+                const rotateX = (mouseY / rect.height) * -20; // Max 20 degrees
+                const rotateY = (mouseX / rect.width) * 20;   // Max 20 degrees
+                
+                const scale = 1.05; // Slight scale on hover
+                
+                flipCard.style.transform = `scale(${scale}) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+        }
+        
+        // Show QR code section
+        function showQRSection() {
+            const qrSection = document.getElementById('qr-section');
+            const quoteSection = document.getElementById('quote-section');
+            
+            qrSection.style.display = 'block';
+            quoteSection.style.display = 'none';
+            
+            // Add entrance animation
+            qrSection.style.opacity = '0';
+            qrSection.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                qrSection.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                qrSection.style.opacity = '1';
+                qrSection.style.transform = 'translateY(0)';
+            }, 100);
+            
+            generateQRCode();
+        }
+        
+        // Show quote section
+        function showQuoteSection() {
+            const qrSection = document.getElementById('qr-section');
+            const quoteSection = document.getElementById('quote-section');
+            
+            qrSection.style.display = 'none';
+            quoteSection.style.display = 'block';
+            
+            // Add entrance animation
+            quoteSection.style.opacity = '0';
+            quoteSection.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                quoteSection.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                quoteSection.style.opacity = '1';
+                quoteSection.style.transform = 'translateY(0)';
+            }, 100);
+            
+            displayRandomQuote();
+            
+            // Initialize tilt effect for the flip card
+            setTimeout(() => {
+                initTiltEffect();
+            }, 150);
+        }
+        
+        // Generate QR code with error handling
+        function generateQRCode() {
+            const qrCodeElement = document.getElementById('qrcode');
+            qrCodeElement.innerHTML = '<div class="loading"></div>';
+            
+            try {
+                setTimeout(() => {
+                    const qr = qrcode(0, 'M');
+                    qr.addData(qrUrl);
+                    qr.make();
+                    
+                    const qrCanvas = document.createElement('canvas');
+                    const size = 200;
+                    qrCanvas.width = size;
+                    qrCanvas.height = size;
+                    
+                    const ctx = qrCanvas.getContext('2d');
+                    const moduleCount = qr.getModuleCount();
+                    const cellSize = size / moduleCount;
+                    
+                    // Fill background
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, size, size);
+                    
+                    // Draw QR modules
+                    ctx.fillStyle = '#2c3e50';
+                    for (let row = 0; row < moduleCount; row++) {
+                        for (let col = 0; col < moduleCount; col++) {
+                            if (qr.isDark(row, col)) {
+                                ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+                            }
+                        }
+                    }
+                    
+                    qrCodeElement.innerHTML = '';
+                    qrCodeElement.appendChild(qrCanvas);
+                    
+                    // Add success animation
+                    qrCanvas.style.opacity = '0';
+                    qrCanvas.style.transform = 'scale(0.8)';
+                    setTimeout(() => {
+                        qrCanvas.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                        qrCanvas.style.opacity = '1';
+                        qrCanvas.style.transform = 'scale(1)';
+                    }, 100);
+                    
+                }, 500); // Small delay to show loading animation
+                
+            } catch (error) {
+                console.error('QR Code generation failed:', error);
+                qrCodeElement.innerHTML = '<p style="color: #e74c3c; font-size: 0.9rem;">QR Code generation failed. Please refresh the page.</p>';
+            }
+        }
+        
+        // Display random quote with animation
+        function displayRandomQuote() {
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * emersonQuotes.length);
+            } while (newIndex === currentQuoteIndex && emersonQuotes.length > 1);
+            
+            currentQuoteIndex = newIndex;
+            const selectedQuote = emersonQuotes[currentQuoteIndex];
+            currentQuote = selectedQuote.quote;
+            
+            const quoteText = document.getElementById('quote-text');
+            const explanationText = document.getElementById('explanation-text');
+            const flipCard = document.getElementById('flip-card');
+            
+            // Add loading animation
+            quoteText.style.opacity = '0.5';
+            explanationText.style.opacity = '0.5';
+            
+            setTimeout(() => {
+                quoteText.textContent = selectedQuote.quote;
+                explanationText.textContent = selectedQuote.explanation;
+                
+                // Reset flip card to front
+                flipCard.classList.remove('flipped');
+                isFlipped = false;
+                
+                // Restore opacity with animation
+                quoteText.style.transition = 'opacity 0.5s ease';
+                explanationText.style.transition = 'opacity 0.5s ease';
+                quoteText.style.opacity = '1';
+                explanationText.style.opacity = '1';
+            }, 300);
+        }
+        
+        // Toggle flip card
+        function toggleFlipCard() {
+            const flipCard = document.getElementById('flip-card');
+            flipCard.classList.toggle('flipped');
+            isFlipped = !isFlipped;
+            
+            // Add haptic feedback for mobile devices
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+        }
+        
+        // Copy quote to clipboard
+        function copyQuote() {
+            const quoteText = currentQuote + ' — Ralph Waldo Emerson';
+            
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(quoteText).then(() => {
+                    showNotification('Quote copied to clipboard!');
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    fallbackCopyTextToClipboard(quoteText);
+                });
+            } else {
+                fallbackCopyTextToClipboard(quoteText);
+            }
+        }
+        
+        // Fallback copy method for older browsers
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showNotification('Quote copied to clipboard!');
+                } else {
+                    showNotification('Failed to copy quote');
+                }
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+                showNotification('Failed to copy quote');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+        
+        // Share website link
+        function shareLink() {
+            const shareUrl = window.location.origin + window.location.pathname;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Morning Seeds - Daily Emerson Wisdom',
+                    text: 'Get daily inspiration from Ralph Waldo Emerson',
+                    url: shareUrl
+                }).then(() => {
+                    showNotification('Link shared successfully!');
+                }).catch(err => {
+                    console.error('Error sharing:', err);
+                    copyLinkToClipboard(shareUrl);
+                });
+            } else {
+                copyLinkToClipboard(shareUrl);
+            }
+        }
+        
+        // Copy link to clipboard as fallback
+        function copyLinkToClipboard(url) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(url).then(() => {
+                    showNotification('Link copied to clipboard!');
+                }).catch(err => {
+                    console.error('Failed to copy link: ', err);
+                    fallbackCopyTextToClipboard(url);
+                });
+            } else {
+                fallbackCopyTextToClipboard(url);
+            }
+        }
+        
+        // Show notification
+        function showNotification(message) {
+            // Remove existing notification if any
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+        
+        // Initialize event listeners when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const flipCard = document.getElementById('flip-card');
+            if (flipCard) {
+                flipCard.addEventListener('click', toggleFlipCard);
+                
+                // Make flip card focusable for keyboard navigation
+                flipCard.setAttribute('tabindex', '0');
+                flipCard.setAttribute('role', 'button');
+                flipCard.setAttribute('aria-label', 'Click to flip card and see explanation');
+            }
+            
+            // New quote button functionality
+            const newQuoteBtn = document.getElementById('new-quote-btn');
+            if (newQuoteBtn) {
+                newQuoteBtn.addEventListener('click', function() {
+                    // Add button press animation
+                    this.style.transform = 'translateY(-1px) scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                        displayRandomQuote();
+                    }, 150);
+                });
+            }
+            
+            // Copy button functionality
+            const copyBtn = document.getElementById('copy-btn');
+            if (copyBtn) {
+                copyBtn.addEventListener('click', function() {
+                    this.style.transform = 'translateY(-1px) scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                        copyQuote();
+                    }, 150);
+                });
+            }
+            
+            // Share button functionality
+            const shareBtn = document.getElementById('share-btn');
+            if (shareBtn) {
+                shareBtn.addEventListener('click', function() {
+                    this.style.transform = 'translateY(-1px) scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                        shareLink();
+                    }, 150);
+                });
+            }
+            
+            // Initialize page
+            initializePage();
+        });
+        
+        // Add service worker for offline functionality (optional enhancement)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                // Service worker registration would go here for offline support
+                console.log('Morning Seeds loaded successfully');
+            });
+        }
+        
+        // Add error handling for uncaught errors
+        window.addEventListener('error', function(event) {
+            console.error('An error occurred:', event.error);
+            // Could show user-friendly error message here
+        });
+    </script>
+</body>
+</html>
+
